@@ -1,17 +1,20 @@
 package pl.lodz.p.it.zzpj.spotify.model;
 
+
 import com.fasterxml.jackson.annotation.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(alphabetic = true)
-public class Playlist {
+public class Owner {
+
+    @JsonProperty("display_name")
+    private String displayName;
+
     @JsonProperty("external_urls")
     private ExternalUrls externalUrls;
 
@@ -21,22 +24,14 @@ public class Playlist {
     @JsonProperty("id")
     private String id;
 
-    @JsonProperty("images")
-    private List<Image> images = null;
+    @JsonProperty("type")
+    private String type;
 
-    @JsonProperty("name")
-    private String name;
-
-    @JsonProperty("owner")
-    private Owner owner;
+    @JsonProperty("uri")
+    private String uri;
 
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
-
-    @JsonPropertyOrder("tracks")
-    private Tracks tracks;
-
 
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {

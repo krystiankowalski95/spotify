@@ -1,7 +1,7 @@
 package pl.lodz.p.it.zzpj.spotify.model;
 
 import com.fasterxml.jackson.annotation.*;
-import lombok.AllArgsConstructor;
+import com.sun.mail.imap.protocol.Item;
 import lombok.Data;
 
 import java.util.HashMap;
@@ -10,33 +10,33 @@ import java.util.Map;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder(alphabetic = true)
-public class Playlist {
-    @JsonProperty("external_urls")
-    private ExternalUrls externalUrls;
+@JsonPropertyOrder({
+        "href",
+        "items",
+        "limit",
+        "next",
+        "offset",
+        "previous",
+        "total"
+})
+public class Tracks {
 
     @JsonProperty("href")
     private String href;
-
-    @JsonProperty("id")
-    private String id;
-
-    @JsonProperty("images")
-    private List<Image> images = null;
-
-    @JsonProperty("name")
-    private String name;
-
-    @JsonProperty("owner")
-    private Owner owner;
-
+    @JsonProperty("items")
+    private List<Item> items = null;
+    @JsonProperty("limit")
+    private Integer limit;
+    @JsonProperty("next")
+    private String next;
+    @JsonProperty("offset")
+    private Integer offset;
+    @JsonProperty("previous")
+    private String previous;
+    @JsonProperty("total")
+    private Integer total;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
-
-    @JsonPropertyOrder("tracks")
-    private Tracks tracks;
-
 
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
@@ -47,4 +47,5 @@ public class Playlist {
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
     }
+
 }
