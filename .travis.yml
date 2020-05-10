@@ -1,7 +1,11 @@
 language: java
 jdk:
   - openjdk11
-  -
+
+
+before_install:
+  - chmod +x mvnw
+
 install:
   - mvn clean package
 
