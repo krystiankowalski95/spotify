@@ -1,7 +1,9 @@
 language: java
 jdk:
   - openjdk11
-
+  -
+install:
+  - mvn clean package
 
 cache:
   directories:
