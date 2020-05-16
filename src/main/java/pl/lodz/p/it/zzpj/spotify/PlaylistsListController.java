@@ -16,12 +16,10 @@ public class PlaylistsListController {
 
 
     public List<Playlist> getPlaylists() {
-        ResponseEntity<Playlist[]> response = restTemplate.getForEntity(
-                "http://localhost:8080/playlists",
-                Playlist[].class
-        );
-
-        Playlist[] playlists = response.getBody();
-        return Arrays.asList(playlists);
+        String url = "http://localhost:8080/playlists";
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<Playlist> response
+                = restTemplate.getForEntity(url, Playlist.class);
+        return (List<Playlist>) response;
     }
 }
