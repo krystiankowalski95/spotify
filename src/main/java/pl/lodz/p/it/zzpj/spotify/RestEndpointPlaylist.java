@@ -18,18 +18,6 @@ import java.util.List;
 
 @RestController
 public class RestEndpointPlaylist {
-    RequestCallback requestCallback(final String name,String jwtToken) {
-        return clientHttpRequest -> {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(clientHttpRequest.getBody(), name);
-            clientHttpRequest.getHeaders().add(
-                    HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-            clientHttpRequest.getHeaders().add(
-                    HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken);
-        };
-    }
-
-
     //Get User's list of Playlist
     @GetMapping("/playlists")
     public ResponseEntity<Object> getPlaylists(OAuth2Authentication details) {
@@ -44,7 +32,6 @@ public class RestEndpointPlaylist {
                 HttpMethod.GET,
                 httpEntity,Object.class);
     }
-
 
     @PutMapping("/playlist/{name}")
     public void addPlaylists(OAuth2Authentication details, @PathVariable("name")String playlistName) {
