@@ -12,35 +12,35 @@
     <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
 </head>
 <body>
-<h1>Demo</h1>
-<div class="container">
-    <div class="container unauthenticated">
-        With Spotify: <a href="/login">click here</a>
-    </div>
-    <div class="container authenticated">
-        Logged in as: <span id="user"></span>
-        <div>
-            <a href="#" th:href="@{/logout}">Log Out</a>
+    <h1>Demo</h1>
+    <div class="container">
+        <div class="container unauthenticated">
+            With Spotify: <a href="/login">click here</a>
         </div>
-    </div>
-    <script type="text/javascript">
-        $.get("/user", function(data) {
-            console.log('#user');
-            $("#user").html(data.userAuthentication.details.name);
-            $(".unauthenticated").hide()
-            $(".authenticated").show()
-        });
-
-        var logout = function() {
-            $.post("/logout", function() {
-                $("#user").html('');
-                $(".unauthenticated").show();
-                $(".authenticated").hide();
+        <div class="container authenticated">
+            Logged in as: <span id="user"/>
+            <div>
+                <a th:href="@{/logout/}">Log Out</a>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $.get("/user", function(data) {
+                console.log('#user');
+                $("#user").html(data.userAuthentication.details.name);
+                $(".unauthenticated").hide()
+                $(".authenticated").show()
             });
-            return true;
-        }
-    </script>
-    <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
-</div>
-</body>
+
+            var logout = function() {
+                $.post("/logout", function() {
+                    $("#user").html('');
+                    $(".unauthenticated").show();
+                    $(".authenticated").hide();
+                });
+                return true;
+            }
+        </script>
+        <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
+    </div>
+    </body>
 </html>

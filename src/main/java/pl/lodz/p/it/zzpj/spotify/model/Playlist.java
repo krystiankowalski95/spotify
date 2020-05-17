@@ -47,4 +47,14 @@ public class Playlist {
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
     }
+
+    @JsonAnyGetter
+    public String getName() {
+        return name;
+    }
+
+    @JsonAnySetter
+    public void setName(String name) {
+        this.name = name;
+    }
 }
