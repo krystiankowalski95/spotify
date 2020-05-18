@@ -1,14 +1,11 @@
 package pl.lodz.p.it.zzpj.spotify.model;
 
-import java.util.HashMap;
-import java.util.Map;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -33,4 +30,7 @@ public class ExternalIds {
         this.additionalProperties.put(name, value);
     }
 
+    public ExternalIds(LinkedHashMap<String, Object> linkedHashMap){
+        this.isrc = (String) linkedHashMap.get("iscr");
+    }
 }

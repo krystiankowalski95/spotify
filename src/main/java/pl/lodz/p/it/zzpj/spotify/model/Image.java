@@ -1,14 +1,9 @@
 package pl.lodz.p.it.zzpj.spotify.model;
 
-import java.util.HashMap;
-import java.util.Map;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
+
+import java.util.*;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -39,4 +34,17 @@ public class Image {
         this.additionalProperties.put(name, value);
     }
 
+    public Image(LinkedHashMap<String, Object> linkedHashMap){
+        this.height = (Integer) linkedHashMap.get("height");
+        this.url = (String) linkedHashMap.get("url");
+        this.width = (Integer) linkedHashMap.get("width");
+    }
+
+    public static List<Image> makeImages(LinkedHashMap<String, Object> linkedHashMap){
+        List<Image> images = new ArrayList<>();
+        for(Map.Entry<String, Object> map: linkedHashMap.entrySet()){
+            images.add(new Image((LinkedHashMap<String, Object>) map));
+        }
+        return images;
+    }
 }

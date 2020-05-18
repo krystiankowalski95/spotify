@@ -1,7 +1,6 @@
 package pl.lodz.p.it.zzpj.spotify.model;
 
 import com.fasterxml.jackson.annotation.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
 
@@ -48,7 +47,13 @@ public class Playlist {
     }
 
     public Playlist(LinkedHashMap<String, Object> linkedHashMap) {
-        href = (String) linkedHashMap.get("href");
+        this.externalUrls = new ExternalUrls((LinkedHashMap<String, Object>) linkedHashMap.get("external_urls"));
+        this.href = (String) linkedHashMap.get("href");
+        this.id = (String) linkedHashMap.get("id");
+        this.images = (List<Image>) linkedHashMap.get("images");
+        this.name = (String) linkedHashMap.get("name");
+        this.owner = (Owner) linkedHashMap.get("Owner");
+        this.tracks = new Tracks((LinkedHashMap<String, Object>)linkedHashMap.get("tracks"));
     }
 
     public static List<Playlist> makePlaylistsFromResponseEntity(ResponseEntity<Object> responseEntity) {
