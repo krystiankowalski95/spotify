@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Playlists</title>
+</head>
+<body>
+<table border="1">
+    <tr th:each="pl: ${playlist}">
+        <td th:text="${pl.name}"></td>
+        <td th:text="${pl.tracks.total}"></td>
+    </tr>
+</table>
+</body>
+</html>
