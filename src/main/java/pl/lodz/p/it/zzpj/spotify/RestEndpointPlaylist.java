@@ -1,5 +1,6 @@
 package pl.lodz.p.it.zzpj.spotify;
 
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -7,6 +8,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -43,7 +46,7 @@ public class RestEndpointPlaylist {
     }
 
     @GetMapping("/newPlaylist")
-    public Playlist generateNewPlaylist(OAuth2Authentication details){
+    public List<Playlist> generateNewPlaylist(OAuth2Authentication details){
         String jwt = ((OAuth2AuthenticationDetails)details.getDetails()).getTokenValue();
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -72,18 +75,53 @@ public class RestEndpointPlaylist {
         UriComponentsBuilder newTracksUriBuilder = UriComponentsBuilder.fromHttpUrl("https://api.spotify.com/v1/recommendations")
                 .queryParam("seed_tracks",baseTrackId1, baseTrackId2);
 
-        ResponseEntity<Object> tracksForNewPlaylist = restTemplate.exchange(newTracksUriBuilder.toUriString(),
+
+        ArrayList<Object> tracksForNewPlaylist = (ArrayList<Object>) ((LinkedHashMap)restTemplate.exchange(newTracksUriBuilder.toUriString(),
                 HttpMethod.GET,
                 httpEntity,
                 Object.class
-                );
+                ).getBody()).get("tracks");
 
         String currentUserID = (String) ((LinkedHashMap) restTemplate.exchange("https://api.spotify.com/v1/me",
                 HttpMethod.GET,
                 httpEntity,
                 Object.class
                 ).getBody()).get("id");
-        
+
+        JSONObject parametersMapForNewPlaylist = new JSONObject();
+        parametersMapForNewPlaylist.put("name", "Test Playlist");
+        parametersMapForNewPlaylist.put("description", "This is a test playlist for ZZPJ project");
+
+        HttpEntity httpEntityForNewPlaylist = new HttpEntity(parametersMapForNewPlaylist.toString(), httpHeaders);
+
+        String createdPlaylistId = (String) ((LinkedHashMap) (restTemplate.exchange(MessageFormat.format(
+                "https://api.spotify.com/v1/users/{0}/playlists",currentUserID),
+                HttpMethod.POST,
+                httpEntityForNewPlaylist,
+                Object.class
+                ).getBody())).get("id");
+
+
+        JSONObject parametersMapForAddingTracks = new JSONObject();
+        JSONArray trackList = new JSONArray();
+//        trackList.appendElement();
+
+        for(int i =0 ; i<tracksForNewPlaylist.size() ; i++){
+            trackList.appendElement( "spotify:track:"+
+                    ((LinkedHashMap)tracksForNewPlaylist.get(i)).get("id")
+            );
+        }
+        parametersMapForAddingTracks.put("uris",trackList);
+
+        HttpEntity httpEntityForAddingTracks = new HttpEntity(parametersMapForAddingTracks.toString(), httpHeaders);
+
+        ResponseEntity<Object> addedTracksResponse =  restTemplate.exchange(MessageFormat.format(
+                "https://api.spotify.com/v1/playlists/{0}/tracks",createdPlaylistId),
+                HttpMethod.POST,
+                httpEntityForAddingTracks,
+                Object.class
+                );
+
 
 
 
@@ -95,8 +133,12 @@ public class RestEndpointPlaylist {
 //                httpEntity,
 //                Object.class);
 
+        ResponseEntity<Object> regeneratedPlaylists = restTemplate.exchange("https://api.spotify.com/v1/me/playlists/?offset=0&limit=20",
+                HttpMethod.GET,
+                httpEntity,Object.class);
 
-        return Playlist.makePlaylistsFromResponseEntity(responseEntity).get(0);
+
+        return Playlist.makePlaylistsFromResponseEntity(responseEntity);
 
     }
 
