@@ -2,6 +2,7 @@ package pl.lodz.p.it.zzpj.spotify.model;
 
 import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
+import org.springframework.http.ResponseEntity;
 
 import java.util.*;
 
@@ -101,5 +102,19 @@ public class Item {
             items.add(new Item((LinkedHashMap<String, Object>) map));
         }
         return items;
+    }
+
+    public static List<Item> makeItemsFromResponseEntity(ResponseEntity<Object> responseEntity) {
+        List<Item> convertedItems = new ArrayList<>();
+        LinkedHashMap object = (LinkedHashMap)responseEntity.getBody();
+        ArrayList itemsArray = (ArrayList) object.get("items");
+        System.out.println(object.get("items"));
+
+
+        for (Object o : itemsArray) {
+            LinkedHashMap element = (LinkedHashMap) o;
+            convertedItems.add(new Item(element));
+        }
+        return convertedItems;
     }
 }

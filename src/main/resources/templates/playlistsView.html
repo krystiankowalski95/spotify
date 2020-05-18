@@ -8,8 +8,12 @@
 <table border="1">
     <tr th:each="pl: ${playlist}">
         <td th:text="${pl.name}"></td>
+        <td><img th:src="@{${pl.images[0].url}}" height=100 width=100/></td>
         <td th:text="${pl.tracks.total}"></td>
     </tr>
 </table>
+    <div>
+        <a href="#" th:href="@{/}">Go back</a>
+    </div>
 </body>
 </html>

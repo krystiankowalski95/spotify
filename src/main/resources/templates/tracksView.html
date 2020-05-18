@@ -5,11 +5,16 @@
     <title>Tracks</title>
 </head>
 <body>
-<table border="1">
-    <tr th:each="track: ${tracks}">
-        <td th:text="${track.limit}"></td>
-        <td th:text="${track.total}"></td>
-    </tr>
-</table>
+<div>
+    <table border="3">
+        <tr th:each="item: ${items}">
+            <td th:text="${item.name}"
+            <td><img th:src="@{${item.getAlbum().images[0].url}}" height=100 width=100/></td>
+        </tr>
+    </table>
+</div>
+<div>
+    <a href="#" th:href="@{/}">Go back</a>
+</div>
 </body>
 </html>
