@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ModelAndView;
+import pl.lodz.p.it.zzpj.spotify.model.Tracks;
 
 @RestController
 public class RestEndpointTracks {
 
     @GetMapping("/track/{searchPhrase}")
-    public ResponseEntity<Object> getTracks(OAuth2Authentication details, @PathVariable("searchPhrase")String phrase) {
+    public ModelAndView getTracks(OAuth2Authentication details, @PathVariable("searchPhrase")String phrase) {
         String jwt = ((OAuth2AuthenticationDetails)details.getDetails()).getTokenValue();
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -23,8 +25,10 @@ public class RestEndpointTracks {
         HttpEntity httpEntity = new HttpEntity(httpHeaders);
 
 
-        return restTemplate.exchange("https://api.spotify.com/v1/search?q="+phrase+"&limit=50&type=track",
+        ResponseEntity<Object> response = restTemplate.exchange("https://api.spotify.com/v1/search?q="+phrase+"&limit=50&type=track",
                 HttpMethod.GET,
                 httpEntity,Object.class);
+        return new ModelAndView("tracksView", "tracks", Tracks.makeTracksFromResponseEntity(response));
+        //return response;
     }
 }

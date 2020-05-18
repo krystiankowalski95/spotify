@@ -2,6 +2,7 @@ package pl.lodz.p.it.zzpj.spotify.model;
 
 import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
+import org.springframework.http.ResponseEntity;
 
 import java.util.*;
 
@@ -35,6 +36,30 @@ public class Tracks {
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
+    public List<Item> getItems() {
+        return items;
+    }
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public String getNext() {
+        return next;
+    }
+
+    public Integer getOffset() {
+        return offset;
+    }
+
+    public String getPrevious() {
+        return previous;
+    }
+
+    public Integer getTotal() {
+        return total;
+    }
+
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
@@ -61,5 +86,11 @@ public class Tracks {
             tracks.add(new Tracks((LinkedHashMap<String, Object>) map));
         }
         return tracks;
+    }
+
+    public static Tracks makeTracksFromResponseEntity(ResponseEntity<Object> responseEntity) {
+        List<Tracks> convertedPlaylists = new ArrayList<>();
+        LinkedHashMap object = (LinkedHashMap)responseEntity.getBody();
+        return new Tracks(object);
     }
 }

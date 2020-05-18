@@ -1,26 +1,25 @@
 package pl.lodz.p.it.zzpj.spotify;
 
 import net.minidev.json.JSONObject;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ModelAndView;
 import pl.lodz.p.it.zzpj.spotify.model.Playlist;
-
-import java.util.Collection;
-import java.util.List;
 
 @RestController
 public class RestEndpointPlaylist {
     //Get User's list of Playlist
     @GetMapping("/playlists")
-    public List<Playlist> getPlaylists(OAuth2Authentication details) {
+    public ModelAndView getPlaylists(OAuth2Authentication details) {
         String jwt = ((OAuth2AuthenticationDetails)details.getDetails()).getTokenValue();
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -30,7 +29,8 @@ public class RestEndpointPlaylist {
                 HttpMethod.GET,
                 httpEntity,Object.class);
 
-        return Playlist.makePlaylistsFromResponseEntity(responseEntity);
+        return new ModelAndView("playlistsView", "playlist", Playlist.makePlaylistsFromResponseEntity(responseEntity));
+        //return Playlist.makePlaylistsFromResponseEntity(responseEntity);
     }
 
     @PutMapping("/playlist/{name}")
