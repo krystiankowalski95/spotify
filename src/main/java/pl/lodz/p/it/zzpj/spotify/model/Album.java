@@ -1,14 +1,11 @@
 package pl.lodz.p.it.zzpj.spotify.model;
 
+import com.fasterxml.jackson.annotation.*;
+
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -182,6 +179,22 @@ public class Album {
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+
+    public Album(LinkedHashMap<String, Object> linkedHashMap){
+        this.albumType = (String) linkedHashMap.get("album_type");
+        this.artists = Artist.makeArtist((LinkedHashMap<String, Object>) linkedHashMap.get("artists"));
+        this.externalUrls = new ExternalUrls((LinkedHashMap<String, Object>) linkedHashMap.get("external_urls"));
+        this.href = (String) linkedHashMap.get("href");
+        this.id = (String) linkedHashMap.get("id");
+        //this.images =
+        this.name = (String) linkedHashMap.get("name");
+        this.releaseDate = (String) linkedHashMap.get("release_date");
+        this.releaseDatePrecision = (String) linkedHashMap.get("release_date_precision");
+        this.totalTracks = (Integer) linkedHashMap.get("total_tracks");
+        this.type = (String) linkedHashMap.get("type");
+        this.uri = (String) linkedHashMap.get("uri");
     }
 
 }

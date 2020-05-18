@@ -1,15 +1,10 @@
 package pl.lodz.p.it.zzpj.spotify.model;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
+import org.springframework.http.ResponseEntity;
+
+import java.util.*;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -71,6 +66,10 @@ public class Item {
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
+    public Integer getDurationMs() {
+        return durationMs;
+    }
+
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
@@ -81,4 +80,41 @@ public class Item {
         this.additionalProperties.put(name, value);
     }
 
+    public void makeItemFromLinkedHashMap(LinkedHashMap<String, Object> linkedHashMap) {
+        href = (String) linkedHashMap.get("href");
+    }
+
+    public Item(LinkedHashMap<String, Object> linkedHashMap){
+        this.album = new Album((LinkedHashMap<String, Object>) linkedHashMap.get("album"));
+        this.artists = Artist.makeArtist((LinkedHashMap<String, Object>) linkedHashMap.get("artists"));
+        this.discNumber = (Integer) linkedHashMap.get("disc_number");
+        this.durationMs = (Integer) linkedHashMap.get("duration_ms");
+        this.explicit = (Boolean) linkedHashMap.get("explicit");
+        //this.externalIds = (Integer) linkedHashMap.get("duration_ms");
+        this.externalUrls = new ExternalUrls((LinkedHashMap<String, Object>) linkedHashMap.get("external_urls"));
+        this.href = (String) linkedHashMap.get("href");
+        this.id = (String) linkedHashMap.get("id");
+    }
+
+    public static List<Item> makeItems(LinkedHashMap<String, Object> linkedHashMap){
+        List<Item> items = new ArrayList<>();
+        for(Map.Entry<String, Object> map: linkedHashMap.entrySet()){
+            items.add(new Item((LinkedHashMap<String, Object>) map));
+        }
+        return items;
+    }
+
+    public static List<Item> makeItemsFromResponseEntity(ResponseEntity<Object> responseEntity) {
+        List<Item> convertedItems = new ArrayList<>();
+        LinkedHashMap object = (LinkedHashMap)responseEntity.getBody();
+        ArrayList itemsArray = (ArrayList) object.get("items");
+        System.out.println(object.get("items"));
+
+
+        for (Object o : itemsArray) {
+            LinkedHashMap element = (LinkedHashMap) o;
+            convertedItems.add(new Item(element));
+        }
+        return convertedItems;
+    }
 }
