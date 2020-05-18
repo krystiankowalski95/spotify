@@ -89,7 +89,7 @@ public class RestEndpointPlaylist {
                 ).getBody()).get("id");
 
         JSONObject parametersMapForNewPlaylist = new JSONObject();
-        parametersMapForNewPlaylist.put("name", "Test Playlist");
+        parametersMapForNewPlaylist.put("name", chosenBasePlaylist.getName() + " Reimagined");
         parametersMapForNewPlaylist.put("description", "This is a test playlist for ZZPJ project");
 
         HttpEntity httpEntityForNewPlaylist = new HttpEntity(parametersMapForNewPlaylist.toString(), httpHeaders);
@@ -138,7 +138,7 @@ public class RestEndpointPlaylist {
                 httpEntity,Object.class);
 
 
-        return Playlist.makePlaylistsFromResponseEntity(responseEntity);
+        return Playlist.makePlaylistsFromResponseEntity(regeneratedPlaylists);
 
     }
 
