@@ -20,17 +20,17 @@ import java.util.List;
 public class RestEndpointPlaylist {
     //Get User's list of Playlist
     @GetMapping("/playlists")
-    public ResponseEntity<Object> getPlaylists(OAuth2Authentication details) {
+    public List<Playlist> getPlaylists(OAuth2Authentication details) {
         String jwt = ((OAuth2AuthenticationDetails)details.getDetails()).getTokenValue();
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Authorization", "Bearer " + jwt);
         HttpEntity httpEntity = new HttpEntity(httpHeaders);
-
-
-        return restTemplate.exchange("https://api.spotify.com/v1/me/playlists/?offset=0&limit=20",
+        ResponseEntity<Object> responseEntity = restTemplate.exchange("https://api.spotify.com/v1/me/playlists/?offset=0&limit=20",
                 HttpMethod.GET,
                 httpEntity,Object.class);
+
+        return Playlist.makePlaylistsFromResponseEntity(responseEntity);
     }
 
     @PutMapping("/playlist/{name}")

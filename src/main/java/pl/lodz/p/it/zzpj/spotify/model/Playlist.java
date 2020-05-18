@@ -3,10 +3,9 @@ package pl.lodz.p.it.zzpj.spotify.model;
 import com.fasterxml.jackson.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.http.ResponseEntity;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -46,5 +45,22 @@ public class Playlist {
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    public Playlist(LinkedHashMap<String, Object> linkedHashMap) {
+        href = (String) linkedHashMap.get("href");
+    }
+
+    public static List<Playlist> makePlaylistsFromResponseEntity(ResponseEntity<Object> responseEntity) {
+        List<Playlist> convertedPlaylists = new ArrayList<>();
+        LinkedHashMap object = (LinkedHashMap)responseEntity.getBody();
+        ArrayList playlistArray = (ArrayList) object.get("items");
+
+
+        for (Object o : playlistArray) {
+            LinkedHashMap element = (LinkedHashMap) o;
+            convertedPlaylists.add(new Playlist(element));
+        }
+        return convertedPlaylists;
     }
 }
