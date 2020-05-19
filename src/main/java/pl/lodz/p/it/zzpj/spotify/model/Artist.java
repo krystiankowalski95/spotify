@@ -1,14 +1,9 @@
 package pl.lodz.p.it.zzpj.spotify.model;
 
-import java.util.HashMap;
-import java.util.Map;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
+
+import java.util.*;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -48,4 +43,20 @@ public class Artist {
         this.additionalProperties.put(name, value);
     }
 
+    public Artist(LinkedHashMap<String, Object> linkedHashMap){
+        this.externalUrls = new ExternalUrls((LinkedHashMap<String, Object>) linkedHashMap.get("external_urls"));
+        this.href = (String) linkedHashMap.get("href");
+        this.id = (String) linkedHashMap.get("id");
+        this.name = (String) linkedHashMap.get("name");
+        this.type = (String) linkedHashMap.get("type");
+        this.uri = (String) linkedHashMap.get("uri");
+    }
+
+    public static List<Artist> makeArtist(LinkedHashMap<String, Object> linkedHashMap){
+        List<Artist> artists = new ArrayList<>();
+        for(Map.Entry<String, Object> map: linkedHashMap.entrySet()){
+            artists.add(new Artist((LinkedHashMap<String, Object>) map));
+        }
+        return artists;
+    }
 }

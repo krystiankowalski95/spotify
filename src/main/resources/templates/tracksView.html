@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tracks</title>
+</head>
+<body>
+<div>
+    <table border="3">
+        <tr th:each="item: ${items}">
+            <td th:text="${item.name}"
+            <td><img th:src="@{${item.getAlbum().images[0].url}}" height=100 width=100/></td>
+        </tr>
+    </table>
+</div>
+<div>
+    <a href="#" th:href="@{/}">Go back</a>
+</div>
+</body>
+</html>

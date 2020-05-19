@@ -1,12 +1,10 @@
 package pl.lodz.p.it.zzpj.spotify.model;
 
 import com.fasterxml.jackson.annotation.*;
-import com.sun.mail.imap.protocol.Item;
 import lombok.Data;
+import org.springframework.http.ResponseEntity;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -38,6 +36,30 @@ public class Tracks {
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
+    public List<Item> getItems() {
+        return items;
+    }
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public String getNext() {
+        return next;
+    }
+
+    public Integer getOffset() {
+        return offset;
+    }
+
+    public String getPrevious() {
+        return previous;
+    }
+
+    public Integer getTotal() {
+        return total;
+    }
+
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
@@ -48,4 +70,27 @@ public class Tracks {
         this.additionalProperties.put(name, value);
     }
 
+    public Tracks(LinkedHashMap<String, Object> linkedHashMap){
+        href = (String) linkedHashMap.get("href");
+        items = (List<Item>) linkedHashMap.get("items");
+        limit = (Integer) linkedHashMap.get("limit");
+        next = (String) linkedHashMap.get("next");
+        offset = (Integer) linkedHashMap.get("offset");
+        previous = (String) linkedHashMap.get("previous");
+        total = (Integer) linkedHashMap.get("total");
+    }
+
+    public static List<Tracks> makeTracks(LinkedHashMap<String, Object> linkedHashMap){
+        List<Tracks> tracks = new ArrayList<>();
+        for(Map.Entry<String, Object> map: linkedHashMap.entrySet()){
+            tracks.add(new Tracks((LinkedHashMap<String, Object>) map));
+        }
+        return tracks;
+    }
+
+    public static Tracks makeTracksFromResponseEntity(ResponseEntity<Object> responseEntity) {
+        List<Tracks> convertedPlaylists = new ArrayList<>();
+        LinkedHashMap object = (LinkedHashMap)responseEntity.getBody();
+        return new Tracks(object);
+    }
 }
