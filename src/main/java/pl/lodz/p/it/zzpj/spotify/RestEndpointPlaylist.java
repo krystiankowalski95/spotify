@@ -45,22 +45,27 @@ public class RestEndpointPlaylist {
         //return Playlist.makePlaylistsFromResponseEntity(responseEntity);
     }
 
-    @GetMapping("/newPlaylist")
-    public List<Playlist> generateNewPlaylist(OAuth2Authentication details){
+    @GetMapping("/newPlaylist/{playlistID}")
+    public ModelAndView generateNewPlaylist(OAuth2Authentication details, @PathVariable String playlistID){
         String jwt = ((OAuth2AuthenticationDetails)details.getDetails()).getTokenValue();
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Authorization", "Bearer " + jwt);
         HttpEntity httpEntity = new HttpEntity(httpHeaders);
-        ResponseEntity<Object> responseEntity = restTemplate.exchange("https://api.spotify.com/v1/me/playlists/?offset=0&limit=20",
+//        ResponseEntity<Object> responseEntity = restTemplate.exchange("https://api.spotify.com/v1/me/playlists/?offset=0&limit=20",
+//                HttpMethod.GET,
+//                httpEntity,Object.class);
+//        List<Playlist> userCurrentPlaylists = Playlist.makePlaylistsFromResponseEntity(responseEntity);
+//        String basePLaylistId = chosenBasePlaylist.getId();
+        Playlist chosenBasePlaylist = new Playlist((LinkedHashMap<String, Object>) restTemplate.exchange(MessageFormat.format(
+                "https://api.spotify.com/v1/playlists/{0}",playlistID),
                 HttpMethod.GET,
-                httpEntity,Object.class);
-        List<Playlist> userCurrentPlaylists = Playlist.makePlaylistsFromResponseEntity(responseEntity);
-        Playlist chosenBasePlaylist =  userCurrentPlaylists.get(0);
-        String basePLaylistId = chosenBasePlaylist.getId();
+                httpEntity,
+                Object.class).getBody());
+
 
         ResponseEntity<Object> playlistTracks = restTemplate.exchange(MessageFormat.format(
-                "https://api.spotify.com/v1/playlists/{0}/tracks",basePLaylistId),
+                "https://api.spotify.com/v1/playlists/{0}/tracks",playlistID),
                 HttpMethod.GET,
                 httpEntity,
                 Object.class);
@@ -130,8 +135,8 @@ public class RestEndpointPlaylist {
                 httpEntity,Object.class);
 
 
-        return Playlist.makePlaylistsFromResponseEntity(regeneratedPlaylists);
-
+        //return Playlist.makePlaylistsFromResponseEntity(regeneratedPlaylists);
+        return new ModelAndView("playlistsView", "playlist", Playlist.makePlaylistsFromResponseEntity(regeneratedPlaylists));
     }
 
     @PutMapping("/playlist/{name}")
