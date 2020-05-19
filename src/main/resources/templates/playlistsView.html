@@ -7,10 +7,15 @@
 <body>
 <table border="1">
     <tr th:each="pl: ${playlist}">
+        <td th:text="${pl.id}" />
         <td th:text="${pl.name}"></td>
         <td><img th:src="@{${pl.images[0].url}}" height=100 width=100/></td>
         <td th:text="${pl.tracks.total}"></td>
-        <td> <button type="button">Reimagine!</button></td>
+        <td>
+        <form method="get" th:action="@{'/newPlaylist/' + ${pl.id}}">
+            <button type="submit" name="submit" value="value">Reimagine!</button>
+        </form>
+        </td>
     </tr>
 </table>
     <div>

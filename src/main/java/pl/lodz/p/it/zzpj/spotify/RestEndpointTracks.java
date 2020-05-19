@@ -17,7 +17,7 @@ import pl.lodz.p.it.zzpj.spotify.model.Tracks;
 public class RestEndpointTracks {
 
     @GetMapping("/track/{searchPhrase}")
-    public ModelAndView getTracks(OAuth2Authentication details, @PathVariable("searchPhrase")String phrase) {
+    public ResponseEntity<Object> getTracks(OAuth2Authentication details, @PathVariable("searchPhrase")String phrase) {
         String jwt = ((OAuth2AuthenticationDetails)details.getDetails()).getTokenValue();
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -28,7 +28,7 @@ public class RestEndpointTracks {
         ResponseEntity<Object> response = restTemplate.exchange("https://api.spotify.com/v1/search?q="+phrase+"&limit=50&type=track",
                 HttpMethod.GET,
                 httpEntity,Object.class);
-        return new ModelAndView("tracksView", "tracks", Tracks.makeTracksFromResponseEntity(response));
-        //return response;
+      //  return new ModelAndView("tracksView", "tracks", Tracks.makeTracksFromResponseEntity(response));
+        return response;
     }
 }
