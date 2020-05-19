@@ -66,14 +66,16 @@ public class RestEndpointPlaylist {
                 Object.class);
         LinkedHashMap playlistTrackBody = (LinkedHashMap) playlistTracks.getBody();
         ArrayList playlistTrackBodyItems = (ArrayList) playlistTrackBody.get("items");
-        LinkedHashMap baseTrack1 = (LinkedHashMap) ((LinkedHashMap) playlistTrackBodyItems.get(0)).get("track");
-        LinkedHashMap baseTrack2 = (LinkedHashMap) ((LinkedHashMap) playlistTrackBodyItems.get(1)).get("track");
 
-        String baseTrackId1 = (String) baseTrack1.get("id");
-        String baseTrackId2 = (String) baseTrack2.get("id");
+        List<Integer> possitions = TempUtils.getRandomFromRangeUnreapeated(playlistTrackBodyItems.size(),5);
+        List<String> baseTrackNames = new ArrayList<>();
+        for (Integer possition: possitions) {
+            baseTrackNames.add((String) ((LinkedHashMap) ((LinkedHashMap) playlistTrackBodyItems.get(possition))
+                    .get("track")).get("id"));
+        }
 
         UriComponentsBuilder newTracksUriBuilder = UriComponentsBuilder.fromHttpUrl("https://api.spotify.com/v1/recommendations")
-                .queryParam("seed_tracks",baseTrackId1, baseTrackId2);
+                .queryParam("seed_tracks", baseTrackNames);
 
 
         ArrayList<Object> tracksForNewPlaylist = (ArrayList<Object>) ((LinkedHashMap)restTemplate.exchange(newTracksUriBuilder.toUriString(),
@@ -122,16 +124,6 @@ public class RestEndpointPlaylist {
                 Object.class
                 );
 
-
-
-
-
-//
-//        ResponseEntity<Object> newPlaylist = restTemplate.exchange(MessageFormat.format(
-//                "https://api.spotify.com/v1/users/{0}/playlists",basePLaylistId),
-//                HttpMethod.GET,
-//                httpEntity,
-//                Object.class);
 
         ResponseEntity<Object> regeneratedPlaylists = restTemplate.exchange("https://api.spotify.com/v1/me/playlists/?offset=0&limit=20",
                 HttpMethod.GET,
