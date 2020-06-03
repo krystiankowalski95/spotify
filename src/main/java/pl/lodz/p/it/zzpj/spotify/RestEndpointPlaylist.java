@@ -9,21 +9,16 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 import pl.lodz.p.it.zzpj.spotify.model.Playlist;
-import pl.lodz.p.it.zzpj.spotify.model.Tracks;
 import pl.lodz.p.it.zzpj.spotify.services.PlaylistService;
 
-import java.awt.*;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -49,16 +44,8 @@ public class RestEndpointPlaylist {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Authorization", "Bearer " + jwt);
         HttpEntity httpEntity = new HttpEntity(httpHeaders);
-//        ResponseEntity<Object> responseEntity = restTemplate.exchange("https://api.spotify.com/v1/me/playlists/?offset=0&limit=20",
-//                HttpMethod.GET,
-//                httpEntity,Object.class);
-//        List<Playlist> userCurrentPlaylists = Playlist.makePlaylistsFromResponseEntity(responseEntity);
-//        String basePLaylistId = chosenBasePlaylist.getId();
-        Playlist chosenBasePlaylist = new Playlist((LinkedHashMap<String, Object>) restTemplate.exchange(MessageFormat.format(
-                "https://api.spotify.com/v1/playlists/{0}",playlistID),
-                HttpMethod.GET,
-                httpEntity,
-                Object.class).getBody());
+
+        Playlist chosenBasePlaylist = playlistService.getPlaylist(details, playlistID);
 
 
         ResponseEntity<Object> playlistTracks = restTemplate.exchange(MessageFormat.format(
@@ -86,24 +73,9 @@ public class RestEndpointPlaylist {
                 Object.class
                 ).getBody()).get("tracks");
 
-        String currentUserID = (String) ((LinkedHashMap) restTemplate.exchange("https://api.spotify.com/v1/me",
-                HttpMethod.GET,
-                httpEntity,
-                Object.class
-                ).getBody()).get("id");
+        String currentUserID = playlistService.getCurrentUserID(details);
 
-        JSONObject parametersMapForNewPlaylist = new JSONObject();
-        parametersMapForNewPlaylist.put("name", chosenBasePlaylist.getName() + " Reimagined");
-        parametersMapForNewPlaylist.put("description", "This is a test playlist for ZZPJ project");
-
-        HttpEntity httpEntityForNewPlaylist = new HttpEntity(parametersMapForNewPlaylist.toString(), httpHeaders);
-
-        String createdPlaylistId = (String) ((LinkedHashMap) (restTemplate.exchange(MessageFormat.format(
-                "https://api.spotify.com/v1/users/{0}/playlists",currentUserID),
-                HttpMethod.POST,
-                httpEntityForNewPlaylist,
-                Object.class
-                ).getBody())).get("id");
+        String createdPlaylistId = playlistService.createNewPlaylist(details, chosenBasePlaylist.getName() + " Reimagined").getId();
 
 
         JSONObject parametersMapForAddingTracks = new JSONObject();
