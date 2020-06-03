@@ -45,40 +45,10 @@ public class RestEndpointPlaylist {
         httpHeaders.add("Authorization", "Bearer " + jwt);
         HttpEntity httpEntity = new HttpEntity(httpHeaders);
 
-        Playlist chosenBasePlaylist = playlistService.getPlaylist(details, playlistID);
-        
-        List<String> stringList = playlistService.getRecommendationsForPlaylist(details, playlistID);
-
-        String currentUserID = playlistService.getCurrentUserID(details);
-
-        String createdPlaylistId = playlistService.createNewPlaylist(details, chosenBasePlaylist.getName() + " Reimagined").getId();
-
-
-        JSONObject parametersMapForAddingTracks = new JSONObject();
-        JSONArray trackList = new JSONArray();
-//        trackList.appendElement();
-
-        for(int i =0 ; i<stringList.size() ; i++){
-            trackList.appendElement( "spotify:track:"+
-                    stringList.get(i)
-            );
-        }
-        parametersMapForAddingTracks.put("uris",trackList);
-
-        HttpEntity httpEntityForAddingTracks = new HttpEntity(parametersMapForAddingTracks.toString(), httpHeaders);
-
-        ResponseEntity<Object> addedTracksResponse =  restTemplate.exchange(MessageFormat.format(
-                "https://api.spotify.com/v1/playlists/{0}/tracks",createdPlaylistId),
-                HttpMethod.POST,
-                httpEntityForAddingTracks,
-                Object.class
-                );
-
+        playlistService.generateNewPlaylist(details, playlistID);
 
         List<Playlist> regeneratedPlaylists = playlistService.getPlaylists(details);
 
-
-        //return Playlist.makePlaylistsFromResponseEntity(regeneratedPlaylists);
         return new ModelAndView("playlistsView", "playlist", regeneratedPlaylists);
     }
 

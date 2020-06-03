@@ -1,5 +1,6 @@
 package pl.lodz.p.it.zzpj.spotify.services;
 
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -49,6 +50,16 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     public void generateNewPlaylist(OAuth2Authentication details, String basePlaylistID) {
+
+        Playlist chosenBasePlaylist = this.getPlaylist(details, basePlaylistID);
+
+        List<String> stringList = this.getRecommendationsForPlaylist(details, basePlaylistID);
+
+        String currentUserID = this.getCurrentUserID(details);
+
+        String createdPlaylistId = this.createNewPlaylist(details, chosenBasePlaylist.getName() + " Reimagined").getId();
+
+        this.addNewTracksBasedOnRecommendation(details, createdPlaylistId, stringList);
 
     }
 
@@ -114,7 +125,30 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     public void addNewTracksBasedOnRecommendation(OAuth2Authentication details, String playlistID, List<String> baseTracks) {
+        String jwt = ((OAuth2AuthenticationDetails)details.getDetails()).getTokenValue();
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Authorization", "Bearer " + jwt);
+        HttpEntity httpEntity = new HttpEntity(httpHeaders);
+        JSONObject parametersMapForAddingTracks = new JSONObject();
+        JSONArray trackList = new JSONArray();
+//        trackList.appendElement();
 
+        for(int i =0 ; i<baseTracks.size() ; i++){
+            trackList.appendElement( "spotify:track:"+
+                    baseTracks.get(i)
+            );
+        }
+        parametersMapForAddingTracks.put("uris",trackList);
+
+        HttpEntity httpEntityForAddingTracks = new HttpEntity(parametersMapForAddingTracks.toString(), httpHeaders);
+
+        ResponseEntity<Object> addedTracksResponse =  restTemplate.exchange(MessageFormat.format(
+                "https://api.spotify.com/v1/playlists/{0}/tracks",playlistID),
+                HttpMethod.POST,
+                httpEntityForAddingTracks,
+                Object.class
+        );
     }
 
     @Override
