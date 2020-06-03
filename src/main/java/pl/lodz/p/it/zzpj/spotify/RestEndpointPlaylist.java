@@ -2,6 +2,7 @@ package pl.lodz.p.it.zzpj.spotify;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,6 +21,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 import pl.lodz.p.it.zzpj.spotify.model.Playlist;
 import pl.lodz.p.it.zzpj.spotify.model.Tracks;
+import pl.lodz.p.it.zzpj.spotify.services.PlaylistService;
 
 import java.awt.*;
 import java.text.MessageFormat;
@@ -29,19 +31,14 @@ import java.util.List;
 
 @RestController
 public class RestEndpointPlaylist {
+
+    @Autowired
+    PlaylistService playlistService;
+
     //Get User's list of Playlist
     @GetMapping("/playlists")
     public ModelAndView getPlaylists(OAuth2Authentication details) {
-        String jwt = ((OAuth2AuthenticationDetails)details.getDetails()).getTokenValue();
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Authorization", "Bearer " + jwt);
-        HttpEntity httpEntity = new HttpEntity(httpHeaders);
-        ResponseEntity<Object> responseEntity = restTemplate.exchange("https://api.spotify.com/v1/me/playlists/?offset=0&limit=50",
-                HttpMethod.GET,
-                httpEntity,Object.class);
-
-        return new ModelAndView("playlistsView", "playlist", Playlist.makePlaylistsFromResponseEntity(responseEntity));
+        return new ModelAndView("playlistsView", "playlist", playlistService.getPlaylists(details));
         //return Playlist.makePlaylistsFromResponseEntity(responseEntity);
     }
 
