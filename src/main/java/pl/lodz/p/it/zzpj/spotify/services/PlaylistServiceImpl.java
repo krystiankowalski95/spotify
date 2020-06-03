@@ -2,6 +2,7 @@ package pl.lodz.p.it.zzpj.spotify.services;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -21,6 +22,10 @@ import java.util.List;
 
 @Service
 public class PlaylistServiceImpl implements PlaylistService {
+
+    @Autowired
+    UserService userService;
+
     @Override
     public List<Playlist> getPlaylists(OAuth2Authentication details) {
         String jwt = ((OAuth2AuthenticationDetails)details.getDetails()).getTokenValue();
@@ -55,7 +60,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         List<String> stringList = this.getRecommendationsForPlaylist(details, basePlaylistID);
 
-        String currentUserID = this.getCurrentUserID(details);
+        String currentUserID = userService.getCurrentUserID(details);
 
         String createdPlaylistId = this.createNewPlaylist(details, chosenBasePlaylist.getName() + " Reimagined").getId();
 
@@ -76,7 +81,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         HttpEntity httpEntityForNewPlaylist = new HttpEntity(parametersMapForNewPlaylist.toString(), httpHeaders);
         ResponseEntity responseEntity = restTemplate.exchange(MessageFormat.format(
-                "https://api.spotify.com/v1/users/{0}/playlists",this.getCurrentUserID(details)),
+                "https://api.spotify.com/v1/users/{0}/playlists",userService.getCurrentUserID(details)),
                 HttpMethod.POST,
                 httpEntityForNewPlaylist,
                 Object.class
@@ -151,17 +156,4 @@ public class PlaylistServiceImpl implements PlaylistService {
         );
     }
 
-    @Override
-    public String getCurrentUserID(OAuth2Authentication details) {
-        String jwt = ((OAuth2AuthenticationDetails)details.getDetails()).getTokenValue();
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Authorization", "Bearer " + jwt);
-        HttpEntity httpEntity = new HttpEntity(httpHeaders);
-        return (String) ((LinkedHashMap) restTemplate.exchange("https://api.spotify.com/v1/me",
-                HttpMethod.GET,
-                httpEntity,
-                Object.class
-        ).getBody()).get("id");
-    }
 }

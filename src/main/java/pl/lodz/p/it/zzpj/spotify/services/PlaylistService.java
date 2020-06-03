@@ -12,5 +12,4 @@ public interface PlaylistService {
     Playlist createNewPlaylist(OAuth2Authentication details, String name);
     List<String> getRecommendationsForPlaylist(OAuth2Authentication details, String basePlaylistID);
     void addNewTracksBasedOnRecommendation(OAuth2Authentication details, String playlistID, List<String> baseTracks);
-    String getCurrentUserID(OAuth2Authentication details);
 }
