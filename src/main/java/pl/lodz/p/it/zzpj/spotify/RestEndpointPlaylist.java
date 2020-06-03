@@ -46,32 +46,8 @@ public class RestEndpointPlaylist {
         HttpEntity httpEntity = new HttpEntity(httpHeaders);
 
         Playlist chosenBasePlaylist = playlistService.getPlaylist(details, playlistID);
-
-
-        ResponseEntity<Object> playlistTracks = restTemplate.exchange(MessageFormat.format(
-                "https://api.spotify.com/v1/playlists/{0}/tracks",playlistID),
-                HttpMethod.GET,
-                httpEntity,
-                Object.class);
-        LinkedHashMap playlistTrackBody = (LinkedHashMap) playlistTracks.getBody();
-        ArrayList playlistTrackBodyItems = (ArrayList) playlistTrackBody.get("items");
-
-        List<Integer> possitions = TempUtils.getRandomFromRangeUnreapeated(playlistTrackBodyItems.size(),5);
-        List<String> baseTrackNames = new ArrayList<>();
-        for (Integer possition: possitions) {
-            baseTrackNames.add((String) ((LinkedHashMap) ((LinkedHashMap) playlistTrackBodyItems.get(possition))
-                    .get("track")).get("id"));
-        }
-
-        UriComponentsBuilder newTracksUriBuilder = UriComponentsBuilder.fromHttpUrl("https://api.spotify.com/v1/recommendations")
-                .queryParam("seed_tracks", baseTrackNames);
-
-
-        ArrayList<Object> tracksForNewPlaylist = (ArrayList<Object>) ((LinkedHashMap)restTemplate.exchange(newTracksUriBuilder.toUriString(),
-                HttpMethod.GET,
-                httpEntity,
-                Object.class
-                ).getBody()).get("tracks");
+        
+        List<String> stringList = playlistService.getRecommendationsForPlaylist(details, playlistID);
 
         String currentUserID = playlistService.getCurrentUserID(details);
 
@@ -82,9 +58,9 @@ public class RestEndpointPlaylist {
         JSONArray trackList = new JSONArray();
 //        trackList.appendElement();
 
-        for(int i =0 ; i<tracksForNewPlaylist.size() ; i++){
+        for(int i =0 ; i<stringList.size() ; i++){
             trackList.appendElement( "spotify:track:"+
-                    ((LinkedHashMap)tracksForNewPlaylist.get(i)).get("id")
+                    stringList.get(i)
             );
         }
         parametersMapForAddingTracks.put("uris",trackList);
@@ -99,13 +75,11 @@ public class RestEndpointPlaylist {
                 );
 
 
-        ResponseEntity<Object> regeneratedPlaylists = restTemplate.exchange("https://api.spotify.com/v1/me/playlists/?offset=0&limit=20",
-                HttpMethod.GET,
-                httpEntity,Object.class);
+        List<Playlist> regeneratedPlaylists = playlistService.getPlaylists(details);
 
 
         //return Playlist.makePlaylistsFromResponseEntity(regeneratedPlaylists);
-        return new ModelAndView("playlistsView", "playlist", Playlist.makePlaylistsFromResponseEntity(regeneratedPlaylists));
+        return new ModelAndView("playlistsView", "playlist", regeneratedPlaylists);
     }
 
     @PutMapping("/playlist/{name}")
