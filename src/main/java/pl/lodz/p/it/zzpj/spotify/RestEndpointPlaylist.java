@@ -1,12 +1,10 @@
 package pl.lodz.p.it.zzpj.spotify;
 
-import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,25 +13,21 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.UriComponentsBuilder;
-import pl.lodz.p.it.zzpj.spotify.model.Playlist;
+import pl.lodz.p.it.zzpj.spotify.proxy.PlaylistsProxy;
 import pl.lodz.p.it.zzpj.spotify.services.PlaylistService;
-
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
 
 @RestController
 public class RestEndpointPlaylist {
 
     @Autowired
     PlaylistService playlistService;
+    @Autowired
+    PlaylistsProxy playlistsProxy;
 
     //Get User's list of Playlist
     @GetMapping("/playlists")
     public ModelAndView getPlaylists(OAuth2Authentication details) {
-        return new ModelAndView("playlistsView", "playlist", playlistService.getPlaylists(details));
+        return new ModelAndView("playlistsView", "playlist", playlistsProxy.getPlaylists(details));
         //return Playlist.makePlaylistsFromResponseEntity(responseEntity);
     }
 
@@ -47,9 +41,9 @@ public class RestEndpointPlaylist {
 
         playlistService.generateNewPlaylist(details, playlistID);
 
-        List<Playlist> regeneratedPlaylists = playlistService.getPlaylists(details);
+        playlistsProxy.newPlaylists();
 
-        return new ModelAndView("playlistsView", "playlist", regeneratedPlaylists);
+        return new ModelAndView("playlistsView", "playlist", playlistsProxy.getPlaylists(details));
     }
 
     @PutMapping("/playlist/{name}")
@@ -68,6 +62,8 @@ public class RestEndpointPlaylist {
                 HttpMethod.PUT,
                 requestEntity,
                 Object.class);
+
+        playlistsProxy.newPlaylists();
     }
 
 }
