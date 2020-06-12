@@ -9,15 +9,24 @@
     <tr th:each="pl: ${playlist}">
         <td th:text="${pl.id}" />
         <td th:text="${pl.name}"></td>
-        <td><img th:src="@{${pl.images[0].url}}" height=100 width=100/></td>
+        <td th:if="${pl.getImages().size()>0}">
+        <img th:src="@{${pl.images[0].url}}" height=100 width=100/>
+        </td>
+        <td th:if="${pl.getImages().size()==0}" value="No image"/>
         <td th:text="${pl.tracks.total}"></td>
         <td>
-        <form method="get" th:action="@{'/newPlaylist/' + ${pl.id}}">
+        <form method="get" th:action="@{'/newPlaylist/' + ${pl.id}}" th:if="${pl.getImages().size()>0}">
             <button type="submit" name="submit" value="value">Reimagine!</button>
         </form>
         </td>
     </tr>
 </table>
+    <div>
+        <form th:action="@{/addNew/}">
+            <input type="text" th:name="name"/>
+            <input type="submit" value="Add new empty playlist with given name"/>
+        </form>
+    </div>
     <div>
         <a href="#" th:href="@{/}">Go back</a>
     </div>
