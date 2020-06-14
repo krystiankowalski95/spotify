@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import pl.lodz.p.it.zzpj.spotify.proxy.PlaylistsProxy;
-import pl.lodz.p.it.zzpj.spotify.services.PlaylistService;
+import pl.lodz.p.it.zzpj.spotify.services.interfaces.PlaylistService;
 
 @RestController
 public class RestEndpointPlaylist {

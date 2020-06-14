@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Repository;
 import pl.lodz.p.it.zzpj.spotify.model.Item;
-import pl.lodz.p.it.zzpj.spotify.model.Playlist;
-import pl.lodz.p.it.zzpj.spotify.services.PlaylistService;
-import pl.lodz.p.it.zzpj.spotify.services.TrackService;
+import pl.lodz.p.it.zzpj.spotify.services.interfaces.TrackService;
 
 import java.util.ArrayList;
 import java.util.List;

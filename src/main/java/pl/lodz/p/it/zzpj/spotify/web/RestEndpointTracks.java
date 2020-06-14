@@ -1,29 +1,19 @@
 package pl.lodz.p.it.zzpj.spotify.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.ModelAndView;
-import pl.lodz.p.it.zzpj.spotify.model.Item;
-import pl.lodz.p.it.zzpj.spotify.model.Tracks;
-import pl.lodz.p.it.zzpj.spotify.proxy.PlaylistsProxy;
 import pl.lodz.p.it.zzpj.spotify.proxy.TracksProxy;
-import pl.lodz.p.it.zzpj.spotify.services.PlaylistService;
-import pl.lodz.p.it.zzpj.spotify.services.TrackService;
+import pl.lodz.p.it.zzpj.spotify.services.interfaces.TrackService;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 @RestController
 public class RestEndpointTracks {
@@ -54,7 +44,7 @@ public class RestEndpointTracks {
         System.out.println(item);
         return response.get("tracks");
 
-//        List<Integer> possitions = TempUtils.getRandomFromRangeUnreapeated(playlistTrackBodyItems.size(),5);
+//        List<Integer> possitions = UtilsToRand.getRandomFromRangeUnreapeated(playlistTrackBodyItems.size(),5);
 //        List<String> baseTrackNames = new ArrayList<>();
 //
 //        for (Integer possition: possitions) {

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class TempUtils {
+public class UtilsToRand {
     public static List<Integer> getRandomFromRangeUnreapeated(int max, int count){
         Integer[] arr = new Integer[max];
         for (int i = 0; i < arr.length; i++) {
