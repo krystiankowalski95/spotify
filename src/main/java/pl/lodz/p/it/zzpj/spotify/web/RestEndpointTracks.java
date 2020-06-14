@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import pl.lodz.p.it.zzpj.spotify.HttpConfiguration;
 import pl.lodz.p.it.zzpj.spotify.proxy.TracksProxy;
 import pl.lodz.p.it.zzpj.spotify.services.interfaces.TrackService;
 
@@ -22,26 +23,23 @@ public class RestEndpointTracks {
     TrackService trackService;
     @Autowired
     TracksProxy tracksProxy;
-
+    private HttpConfiguration httpConfiguration;
 
 
     @GetMapping("/track/")
-    public Object getTracks(OAuth2Authentication details, @RequestParam("name")String phrase) {
-        String jwt = ((OAuth2AuthenticationDetails)details.getDetails()).getTokenValue();
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Authorization", "Bearer " + jwt);
-        HttpEntity httpEntity = new HttpEntity(httpHeaders);
+    public Object getTracks(OAuth2Authentication details, @RequestParam("name") String phrase) {
+        httpConfiguration.init(details);
 
-
-        LinkedHashMap response = ((LinkedHashMap)restTemplate.exchange("https://api.spotify.com/v1/search?q="+phrase+"&limit=3&type=track",
+        LinkedHashMap response = ((LinkedHashMap) httpConfiguration.getRestTemplate().exchange(
+                "https://api.spotify.com/v1/search?q=" + phrase + "&limit=3&type=track",
                 HttpMethod.GET,
-                httpEntity,Object.class).getBody());
-
+                httpConfiguration.getHttpEntity(),
+                Object.class).getBody());
 
         LinkedHashMap items = (LinkedHashMap) response.get("tracks");
         LinkedHashMap item = (LinkedHashMap) items.get("items");
         System.out.println(item);
+
         return response.get("tracks");
 
 //        List<Integer> possitions = UtilsToRand.getRandomFromRangeUnreapeated(playlistTrackBodyItems.size(),5);

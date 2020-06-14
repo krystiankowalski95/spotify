@@ -1,4 +1,4 @@
-package pl.lodz.p.it.zzpj.spotify.services;
+package pl.lodz.p.it.zzpj.spotify;
 
 import lombok.Data;
 import org.springframework.http.HttpEntity;
@@ -7,8 +7,7 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.client.RestTemplate;
 
-public @Data
-abstract class AbstractService {
+public @Data class HttpConfiguration {
     private String jwt;
     private RestTemplate restTemplate;
     private HttpHeaders httpHeaders;

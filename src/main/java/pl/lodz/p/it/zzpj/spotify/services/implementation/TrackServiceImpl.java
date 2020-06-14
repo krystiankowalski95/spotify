@@ -7,7 +7,7 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import pl.lodz.p.it.zzpj.spotify.model.Item;
-import pl.lodz.p.it.zzpj.spotify.services.AbstractService;
+import pl.lodz.p.it.zzpj.spotify.HttpConfiguration;
 import pl.lodz.p.it.zzpj.spotify.services.interfaces.TrackService;
 import pl.lodz.p.it.zzpj.spotify.services.interfaces.UserService;
 
@@ -15,19 +15,20 @@ import java.util.List;
 
 
 @Service
-public class TrackServiceImpl extends AbstractService implements TrackService {
+public class TrackServiceImpl implements TrackService {
 
     @Autowired
     UserService userService;
+    private HttpConfiguration httpConfiguration;
 
     @Override
-    public List<Item> getTracks(OAuth2Authentication details, @RequestParam("searchPhrase")String phrase) {
-        super.init(details);
+    public List<Item> getTracks(OAuth2Authentication details, @RequestParam("searchPhrase") String phrase) {
+        httpConfiguration.init(details);
         
-        ResponseEntity<Object> response = this.getRestTemplate().exchange(
+        ResponseEntity<Object> response = httpConfiguration.getRestTemplate().exchange(
                 "https://api.spotify.com/v1/search?q="+phrase+"&limit=3&type=track",
                 HttpMethod.GET,
-                this.getHttpEntity(),
+                httpConfiguration.getHttpEntity(),
                 Object.class);
         return Item.makeItemsFromResponseEntity(response);
     }

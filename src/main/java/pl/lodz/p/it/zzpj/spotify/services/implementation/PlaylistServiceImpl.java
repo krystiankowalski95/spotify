@@ -4,17 +4,14 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import pl.lodz.p.it.zzpj.spotify.UtilsToRand;
 import pl.lodz.p.it.zzpj.spotify.model.Playlist;
-import pl.lodz.p.it.zzpj.spotify.services.AbstractService;
+import pl.lodz.p.it.zzpj.spotify.HttpConfiguration;
 import pl.lodz.p.it.zzpj.spotify.services.interfaces.PlaylistService;
 import pl.lodz.p.it.zzpj.spotify.services.interfaces.UserService;
 
@@ -24,30 +21,31 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 @Service
-public class PlaylistServiceImpl extends AbstractService implements PlaylistService {
+public class PlaylistServiceImpl implements PlaylistService {
 
     @Autowired
     UserService userService;
+    private HttpConfiguration httpConfiguration;
 
     @Override
     public List<Playlist> getPlaylists(OAuth2Authentication details) {
-        super.init(details);
+        httpConfiguration.init(details);
 
-        ResponseEntity<Object> responseEntity = this.getRestTemplate().exchange(
+        ResponseEntity<Object> responseEntity = httpConfiguration.getRestTemplate().exchange(
                 "https://api.spotify.com/v1/me/playlists/?offset=0&limit=50",
                 HttpMethod.GET,
-                this.getHttpEntity(),
+                httpConfiguration.getHttpEntity(),
                 Object.class);
         return Playlist.makePlaylistsFromResponseEntity(responseEntity);
     }
 
     @Override
     public Playlist getPlaylist(OAuth2Authentication details, String playlistID) {
-        super.init(details);
-        return new Playlist((LinkedHashMap<String, Object>) this.getRestTemplate().exchange(
+        httpConfiguration.init(details);
+        return new Playlist((LinkedHashMap<String, Object>) httpConfiguration.getRestTemplate().exchange(
                 MessageFormat.format("https://api.spotify.com/v1/playlists/{0}", playlistID),
                 HttpMethod.GET,
-                this.getHttpEntity(),
+                httpConfiguration.getHttpEntity(),
                 Object.class).getBody());
     }
 
@@ -64,13 +62,13 @@ public class PlaylistServiceImpl extends AbstractService implements PlaylistServ
 
     @Override
     public Playlist createNewPlaylist(OAuth2Authentication details, String name) {
-        super.init(details);
+        httpConfiguration.init(details);
         JSONObject parametersMapForNewPlaylist = new JSONObject();
         parametersMapForNewPlaylist.put("name", name);
         parametersMapForNewPlaylist.put("description", "This is a test playlist for ZZPJ project");
 
-        HttpEntity httpEntityForNewPlaylist = new HttpEntity(parametersMapForNewPlaylist.toString(), this.getHttpHeaders());
-        ResponseEntity responseEntity = this.getRestTemplate().exchange(
+        HttpEntity httpEntityForNewPlaylist = new HttpEntity(parametersMapForNewPlaylist.toString(), httpConfiguration.getHttpHeaders());
+        ResponseEntity responseEntity = httpConfiguration.getRestTemplate().exchange(
                 MessageFormat.format("https://api.spotify.com/v1/users/{0}/playlists", userService.getCurrentUserID(details)),
                 HttpMethod.POST,
                 httpEntityForNewPlaylist,
@@ -81,11 +79,11 @@ public class PlaylistServiceImpl extends AbstractService implements PlaylistServ
 
     @Override
     public List<String> getRecommendationsForPlaylist(OAuth2Authentication details, String basePlaylistID) {
-        super.init(details);
-        ResponseEntity<Object> playlistTracks = this.getRestTemplate().exchange(
+        httpConfiguration.init(details);
+        ResponseEntity<Object> playlistTracks = httpConfiguration.getRestTemplate().exchange(
                 MessageFormat.format("https://api.spotify.com/v1/playlists/{0}/tracks", basePlaylistID),
                 HttpMethod.GET,
-                this.getHttpEntity(),
+                httpConfiguration.getHttpEntity(),
                 Object.class);
         LinkedHashMap playlistTrackBody = (LinkedHashMap) playlistTracks.getBody();
         ArrayList playlistTrackBodyItems = (ArrayList) playlistTrackBody.get("items");
@@ -104,10 +102,10 @@ public class PlaylistServiceImpl extends AbstractService implements PlaylistServ
                     .queryParam("seed_tracks", baseTrackNames);
 
 
-        ArrayList<Object> tracksForNewPlaylist = (ArrayList<Object>) ((LinkedHashMap) this.getRestTemplate().exchange(
+        ArrayList<Object> tracksForNewPlaylist = (ArrayList<Object>) ((LinkedHashMap) httpConfiguration.getRestTemplate().exchange(
                 newTracksUriBuilder.toUriString(),
                 HttpMethod.GET,
-                this.getHttpEntity(),
+                httpConfiguration.getHttpEntity(),
                 Object.class
         ).getBody()).get("tracks");
         ArrayList<String> stringArrayList = new ArrayList<>();
@@ -122,15 +120,15 @@ public class PlaylistServiceImpl extends AbstractService implements PlaylistServ
 
     @Override
     public void addNewTracksBasedOnRecommendation(OAuth2Authentication details, String playlistID, List<String> baseTracks) {
-        super.init(details);
+        httpConfiguration.init(details);
         JSONObject parametersMapForAddingTracks = new JSONObject();
         JSONArray trackList = new JSONArray();
         baseTracks.stream().forEach(track -> trackList.appendElement("spotify:track:"+track));
         parametersMapForAddingTracks.put("uris", trackList);
 
-        HttpEntity httpEntityForAddingTracks = new HttpEntity(parametersMapForAddingTracks.toString(), this.getHttpHeaders());
+        HttpEntity httpEntityForAddingTracks = new HttpEntity(parametersMapForAddingTracks.toString(), httpConfiguration.getHttpHeaders());
 
-        ResponseEntity<Object> addedTracksResponse =  this.getRestTemplate().exchange(
+        ResponseEntity<Object> addedTracksResponse =  httpConfiguration.getRestTemplate().exchange(
                 MessageFormat.format("https://api.spotify.com/v1/playlists/{0}/tracks", playlistID),
                 HttpMethod.POST,
                 httpEntityForAddingTracks,
