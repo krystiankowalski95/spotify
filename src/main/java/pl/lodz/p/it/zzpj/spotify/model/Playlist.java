@@ -85,6 +85,11 @@ public class Playlist {
         return convertedPlaylists;
     }
 
+    public static Playlist makePlaylistFromResponseEntity(ResponseEntity<Object> responseEntity) {
+        LinkedHashMap element = (LinkedHashMap)responseEntity.getBody();
+        return new Playlist(element);
+    }
+
     @Override
     public String toString() {
         return "Playlist{" +

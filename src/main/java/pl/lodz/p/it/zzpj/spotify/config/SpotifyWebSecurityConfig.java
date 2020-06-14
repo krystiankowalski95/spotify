@@ -1,4 +1,4 @@
-package pl.lodz.p.it.zzpj.spotify;
+package pl.lodz.p.it.zzpj.spotify.config;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;

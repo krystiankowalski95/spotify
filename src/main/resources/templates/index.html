@@ -17,13 +17,21 @@
         With Spotify: <a href="/login">click here</a>
     </div>
     <div class="container authenticated">
-        Logged in as: <span id="user"></span>
+        <div>
+            <a href="/logout"> Logout</a>
         <div>
             <a href="#" th:href="@{/playlists}">User Playlists</a>
         </div>
         <div>
-            <a href="#" th:href="@{/track/Sanah}">Sanah Tracks</a>
+            <form th:action="@{/track/}">
+                <input type="text" th:name="name"/>
+                <input type="submit" value="Search for tracks"/>
+            </form>
         </div>
+        <div>
+        <a href="/templates/addNewPlaylist.html">Add new playlist</a>
+        </div>
+    </div>
     </div>
     <script type="text/javascript">
         $.get("/user", function(data) {

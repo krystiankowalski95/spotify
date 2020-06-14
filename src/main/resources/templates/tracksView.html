@@ -7,9 +7,10 @@
 <body>
 <div>
     <table border="3">
-        <tr th:each="item: ${items}">
-            <td th:text="${item.name}"
-            <td><img th:src="@{${item.getAlbum().images[0].url}}" height=100 width=100/></td>
+<!--        <tr th:text="${tracks.getTotal()}"/>-->
+<!--        <tr th:each="item: ${tracks.items}">-->
+<!--            <td th:text="${item.name}"/>-->
+<!--            <td th:text="${item.artists[0]}"/>-->
         </tr>
     </table>
 </div>

@@ -8,15 +8,7 @@ import java.util.*;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-        "href",
-        "items",
-        "limit",
-        "next",
-        "offset",
-        "previous",
-        "total"
-})
+@JsonPropertyOrder(alphabetic = true)
 public class Tracks {
 
     @JsonProperty("href")
