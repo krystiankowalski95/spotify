@@ -1,12 +1,14 @@
 package pl.lodz.p.it.zzpj.spotify.model;
 
 import com.fasterxml.jackson.annotation.*;
+import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "album_type",

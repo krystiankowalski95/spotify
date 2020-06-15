@@ -6,12 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
-import pl.lodz.p.it.zzpj.spotify.model.Item;
 import pl.lodz.p.it.zzpj.spotify.HttpConfiguration;
+import pl.lodz.p.it.zzpj.spotify.model.SearchingTracks;
+import pl.lodz.p.it.zzpj.spotify.model.Tracks;
 import pl.lodz.p.it.zzpj.spotify.services.interfaces.TrackService;
 import pl.lodz.p.it.zzpj.spotify.services.interfaces.UserService;
-
-import java.util.List;
 
 
 @Service
@@ -22,15 +21,16 @@ public class TrackServiceImpl implements TrackService {
     private HttpConfiguration httpConfiguration;
 
     @Override
-    public List<Item> getTracks(OAuth2Authentication details, @RequestParam("searchPhrase") String phrase) {
+    public Tracks getTracks(OAuth2Authentication details, @RequestParam("searchPhrase")String phrase) {
         this.httpConfiguration = new HttpConfiguration(details);
-        
-        ResponseEntity<Object> response = httpConfiguration.getRestTemplate().exchange(
-                "https://api.spotify.com/v1/search?q="+phrase+"&limit=3&type=track",
+
+        ResponseEntity<SearchingTracks> response = httpConfiguration.getRestTemplate().exchange(
+                "https://api.spotify.com/v1/search?q="+phrase+"&limit=15&type=track",
                 HttpMethod.GET,
                 httpConfiguration.getHttpEntity(),
-                Object.class);
-        return Item.makeItemsFromResponseEntity(response);
+                SearchingTracks.class);
+
+        return response.getBody().getTracks();
     }
 
 }

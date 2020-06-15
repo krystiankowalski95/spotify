@@ -2,11 +2,13 @@ package pl.lodz.p.it.zzpj.spotify.model;
 
 import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.http.ResponseEntity;
 
 import java.util.*;
 
 @Data
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "album",
@@ -96,25 +98,4 @@ public class Item {
         this.id = (String) linkedHashMap.get("id");
     }
 
-    public static List<Item> makeItems(LinkedHashMap<String, Object> linkedHashMap){
-        List<Item> items = new ArrayList<>();
-        for(Map.Entry<String, Object> map: linkedHashMap.entrySet()){
-            items.add(new Item((LinkedHashMap<String, Object>) map));
-        }
-        return items;
-    }
-
-    public static List<Item> makeItemsFromResponseEntity(ResponseEntity<Object> responseEntity) {
-        List<Item> convertedItems = new ArrayList<>();
-        LinkedHashMap object = (LinkedHashMap)responseEntity.getBody();
-        ArrayList itemsArray = (ArrayList) object.get("items");
-        System.out.println(object.get("items"));
-
-
-        for (Object o : itemsArray) {
-            LinkedHashMap element = (LinkedHashMap) o;
-            convertedItems.add(new Item(element));
-        }
-        return convertedItems;
-    }
 }
