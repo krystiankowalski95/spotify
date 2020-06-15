@@ -2,11 +2,13 @@ package pl.lodz.p.it.zzpj.spotify.model;
 
 import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.http.ResponseEntity;
 
 import java.util.*;
 
 @Data
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(alphabetic = true)
 public class Playlist {
@@ -44,22 +46,6 @@ public class Playlist {
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public List<Image> getImages() {
-        return images;
-    }
-
-    public Owner getOwner() {
-        return owner;
-    }
-
-    public Tracks getTracks() {
-        return tracks;
     }
 
     public Playlist(LinkedHashMap<String, Object> linkedHashMap) {

@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import pl.lodz.p.it.zzpj.spotify.model.Item;
+import pl.lodz.p.it.zzpj.spotify.model.SearchingTracks;
+import pl.lodz.p.it.zzpj.spotify.model.Tracks;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 
@@ -23,7 +26,7 @@ public class TrackServiceImpl implements TrackService {
     UserService userService;
 
     @Override
-    public List<Item> getTracks(OAuth2Authentication details, @RequestParam("searchPhrase")String phrase) {
+    public Tracks getTracks(OAuth2Authentication details, @RequestParam("searchPhrase")String phrase) {
         String jwt = ((OAuth2AuthenticationDetails)details.getDetails()).getTokenValue();
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -31,10 +34,11 @@ public class TrackServiceImpl implements TrackService {
         HttpEntity httpEntity = new HttpEntity(httpHeaders);
 
 
-        ResponseEntity<Object> response = restTemplate.exchange("https://api.spotify.com/v1/search?q="+phrase+"&limit=3&type=track",
+        ResponseEntity<SearchingTracks> response = restTemplate.exchange("https://api.spotify.com/v1/search?q="+phrase+"&limit=15&type=track",
                 HttpMethod.GET,
-                httpEntity,Object.class);
-        return Item.makeItemsFromResponseEntity(response);
+                httpEntity, SearchingTracks.class);
+
+        return response.getBody().getTracks();
     }
 
 }

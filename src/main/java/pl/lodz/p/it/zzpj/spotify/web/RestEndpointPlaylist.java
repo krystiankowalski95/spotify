@@ -27,14 +27,7 @@ public class RestEndpointPlaylist {
 
     @GetMapping("/newPlaylist/{playlistID}")
     public ModelAndView generateNewPlaylist(OAuth2Authentication details, @PathVariable String playlistID){
-        String jwt = ((OAuth2AuthenticationDetails)details.getDetails()).getTokenValue();
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Authorization", "Bearer " + jwt);
-        HttpEntity httpEntity = new HttpEntity(httpHeaders);
-
         playlistService.generateNewPlaylist(details, playlistID);
-
         playlistsProxy.newPlaylists();
 
         return new ModelAndView("playlistsView", "playlist", playlistsProxy.getPlaylists(details));
@@ -42,11 +35,6 @@ public class RestEndpointPlaylist {
 
     @GetMapping("/addNew/")
     public ModelAndView addPlaylists(OAuth2Authentication details, @RequestParam(value = "name")String playlistName) {
-        String jwt = ((OAuth2AuthenticationDetails)details.getDetails()).getTokenValue();
-        HttpEntity<String> requestEntity;
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Authorization", "Bearer " + jwt);
         playlistService.createNewPlaylist(details,playlistName);
 
         playlistsProxy.newPlaylists();

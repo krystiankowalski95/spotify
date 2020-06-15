@@ -6,11 +6,13 @@
 </head>
 <body>
 <div>
-    <table border="3">
-<!--        <tr th:text="${tracks.getTotal()}"/>-->
-<!--        <tr th:each="item: ${tracks.items}">-->
-<!--            <td th:text="${item.name}"/>-->
-<!--            <td th:text="${item.artists[0]}"/>-->
+
+    <table border="1">
+        <tr th:each="item: ${tracks.items}">
+            <td th:text="${item.artists.get(0).name}"/>
+            <td  th:text="${item.name}">Song's name</td>
+            <td th:text="${item.getPopularity()}" />
+            </td>
         </tr>
     </table>
 </div>

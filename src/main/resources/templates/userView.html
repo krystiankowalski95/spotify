@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User details page</title>
+</head>
+<body>
+<div>
+    <h1>User Details</h1>
+    <h3>
+        Firstname & Lastname : <span th:text="${currentUser.getFirstNameAndLastName()}"/>
+    </h3>
+    <h3>
+        Email address : <span th:text="${currentUser.getEmail()}"/>
+    </h3>
+    <h3>
+        <span th:text="${currentUser.getCountryName()}"/>
+    </h3>
+    <h3 th:if="${currentUser.getImages().size()>0}">
+        <img th:src="@{${currentUser.images[0].url}}" height=100 width=100/>
+    </h3>
+</div>
+<div>
+    <a href="#" th:href="@{/}">Go back</a>
+</div>
+</body>
+</html>
