@@ -8,6 +8,7 @@ class SpotifyApplicationTests {
 
 	@Test
 	void contextLoads() {
+
 	}
 
 }
