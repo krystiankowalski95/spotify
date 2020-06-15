@@ -28,7 +28,7 @@ public class RestEndpointTracks {
 
     @GetMapping("/track/")
     public Object getTracks(OAuth2Authentication details, @RequestParam("name") String phrase) {
-        httpConfiguration.init(details);
+        this.httpConfiguration = new HttpConfiguration(details);
 
         LinkedHashMap response = ((LinkedHashMap) httpConfiguration.getRestTemplate().exchange(
                 "https://api.spotify.com/v1/search?q=" + phrase + "&limit=3&type=track",

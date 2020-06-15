@@ -1,6 +1,7 @@
 package pl.lodz.p.it.zzpj.spotify;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -13,7 +14,7 @@ public @Data class HttpConfiguration {
     private HttpHeaders httpHeaders;
     private HttpEntity httpEntity;
 
-    public void init(OAuth2Authentication details) {
+    public HttpConfiguration(OAuth2Authentication details) {
         this.jwt = ((OAuth2AuthenticationDetails) details.getDetails()).getTokenValue();
         this.restTemplate = new RestTemplate();
         this.httpHeaders = new HttpHeaders();

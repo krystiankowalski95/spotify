@@ -23,7 +23,7 @@ public class TrackServiceImpl implements TrackService {
 
     @Override
     public List<Item> getTracks(OAuth2Authentication details, @RequestParam("searchPhrase") String phrase) {
-        httpConfiguration.init(details);
+        this.httpConfiguration = new HttpConfiguration(details);
         
         ResponseEntity<Object> response = httpConfiguration.getRestTemplate().exchange(
                 "https://api.spotify.com/v1/search?q="+phrase+"&limit=3&type=track",

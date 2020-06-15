@@ -29,7 +29,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     public List<Playlist> getPlaylists(OAuth2Authentication details) {
-        httpConfiguration.init(details);
+        this.httpConfiguration = new HttpConfiguration(details);
 
         ResponseEntity<Object> responseEntity = httpConfiguration.getRestTemplate().exchange(
                 "https://api.spotify.com/v1/me/playlists/?offset=0&limit=50",
@@ -41,7 +41,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     public Playlist getPlaylist(OAuth2Authentication details, String playlistID) {
-        httpConfiguration.init(details);
+        this.httpConfiguration = new HttpConfiguration(details);
         return new Playlist((LinkedHashMap<String, Object>) httpConfiguration.getRestTemplate().exchange(
                 MessageFormat.format("https://api.spotify.com/v1/playlists/{0}", playlistID),
                 HttpMethod.GET,
@@ -62,7 +62,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     public Playlist createNewPlaylist(OAuth2Authentication details, String name) {
-        httpConfiguration.init(details);
+        this.httpConfiguration = new HttpConfiguration(details);
         JSONObject parametersMapForNewPlaylist = new JSONObject();
         parametersMapForNewPlaylist.put("name", name);
         parametersMapForNewPlaylist.put("description", "This is a test playlist for ZZPJ project");
@@ -79,7 +79,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     public List<String> getRecommendationsForPlaylist(OAuth2Authentication details, String basePlaylistID) {
-        httpConfiguration.init(details);
+        this.httpConfiguration = new HttpConfiguration(details);
         ResponseEntity<Object> playlistTracks = httpConfiguration.getRestTemplate().exchange(
                 MessageFormat.format("https://api.spotify.com/v1/playlists/{0}/tracks", basePlaylistID),
                 HttpMethod.GET,
@@ -120,7 +120,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     public void addNewTracksBasedOnRecommendation(OAuth2Authentication details, String playlistID, List<String> baseTracks) {
-        httpConfiguration.init(details);
+        this.httpConfiguration = new HttpConfiguration(details);
         JSONObject parametersMapForAddingTracks = new JSONObject();
         JSONArray trackList = new JSONArray();
         baseTracks.stream().forEach(track -> trackList.appendElement("spotify:track:"+track));

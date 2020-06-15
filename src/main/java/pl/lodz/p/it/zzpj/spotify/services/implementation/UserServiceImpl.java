@@ -15,7 +15,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String getCurrentUserID(OAuth2Authentication details) {
-        httpConfiguration.init(details);
+        this.httpConfiguration = new HttpConfiguration(details);
         return (String) ((LinkedHashMap) httpConfiguration.getRestTemplate().exchange(
                 "https://api.spotify.com/v1/me",
                 HttpMethod.GET,

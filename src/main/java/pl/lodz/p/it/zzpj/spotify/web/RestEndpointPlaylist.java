@@ -25,7 +25,7 @@ public class RestEndpointPlaylist {
 
     @GetMapping("/newPlaylist/{playlistID}")
     public ModelAndView generateNewPlaylist(OAuth2Authentication details, @PathVariable String playlistID){
-        httpConfiguration.init(details);
+        this.httpConfiguration = new HttpConfiguration(details);
         playlistService.generateNewPlaylist(details, playlistID);
         playlistsProxy.newPlaylists();
         return new ModelAndView("playlistsView", "playlist", playlistsProxy.getPlaylists(details));
@@ -33,7 +33,7 @@ public class RestEndpointPlaylist {
 
     @GetMapping("/addNew/")
     public ModelAndView addPlaylists(OAuth2Authentication details, @RequestParam(value = "name")String playlistName) {
-        httpConfiguration.init(details);
+        this.httpConfiguration = new HttpConfiguration(details);
         playlistService.createNewPlaylist(details, playlistName);
         playlistsProxy.newPlaylists();
         return new ModelAndView("playlistsView", "playlist", playlistsProxy.getPlaylists(details));
