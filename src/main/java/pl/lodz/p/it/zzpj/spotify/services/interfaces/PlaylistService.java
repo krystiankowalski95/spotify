@@ -9,6 +9,7 @@ public interface PlaylistService {
     Playlist getPlaylist(OAuth2Authentication details, String plylistID);
     List<Playlist> getPlaylists(OAuth2Authentication details);
     void generateNewPlaylist(OAuth2Authentication details, String basePlaylistID);
+    void unfollowPlaylist(OAuth2Authentication details, String playListID);
     Playlist createNewPlaylist(OAuth2Authentication details, String name);
     List<String> getRecommendationsForPlaylist(OAuth2Authentication details, String basePlaylistID);
     void addNewTracksBasedOnRecommendation(OAuth2Authentication details, String playlistID, List<String> baseTracks);
