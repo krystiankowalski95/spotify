@@ -2,7 +2,10 @@ package pl.lodz.p.it.zzpj.spotify.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import pl.lodz.p.it.zzpj.spotify.HttpConfiguration;
 import pl.lodz.p.it.zzpj.spotify.proxy.PlaylistsProxy;
@@ -20,6 +23,14 @@ public class RestEndpointPlaylist {
     //Get User's list of Playlist
     @GetMapping("/playlists")
     public ModelAndView getPlaylists(OAuth2Authentication details) {
+        return new ModelAndView("playlistsView", "playlist", playlistsProxy.getPlaylists(details));
+    }
+
+    @GetMapping("/unfollowPlaylist/{playlistID}")
+    public ModelAndView getPlaylistDetails(OAuth2Authentication details, @PathVariable String playlistID) {
+        this.httpConfiguration = new HttpConfiguration(details);
+        playlistService.unfollowPlaylist(details,playlistID);
+        playlistsProxy.newPlaylists();
         return new ModelAndView("playlistsView", "playlist", playlistsProxy.getPlaylists(details));
     }
 

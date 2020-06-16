@@ -9,9 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
+import pl.lodz.p.it.zzpj.spotify.HttpConfiguration;
 import pl.lodz.p.it.zzpj.spotify.UtilsToRand;
 import pl.lodz.p.it.zzpj.spotify.model.Playlist;
-import pl.lodz.p.it.zzpj.spotify.HttpConfiguration;
 import pl.lodz.p.it.zzpj.spotify.services.interfaces.PlaylistService;
 import pl.lodz.p.it.zzpj.spotify.services.interfaces.UserService;
 
@@ -58,6 +58,16 @@ public class PlaylistServiceImpl implements PlaylistService {
         String createdPlaylistId = this.createNewPlaylist(details, chosenBasePlaylist.getName() + " Reimagined").getId();
         this.addNewTracksBasedOnRecommendation(details, createdPlaylistId, stringList);
 
+    }
+
+    @Override
+    public void unfollowPlaylist(OAuth2Authentication details, String playListID) {
+        this.httpConfiguration = new HttpConfiguration(details);
+        httpConfiguration.getRestTemplate().exchange(
+                MessageFormat.format(	"https://api.spotify.com/v1/playlists/{0}/followers", playListID),
+                HttpMethod.DELETE,
+                httpConfiguration.getHttpEntity(),
+                Object.class);
     }
 
     @Override

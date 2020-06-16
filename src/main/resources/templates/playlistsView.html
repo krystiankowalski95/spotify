@@ -19,6 +19,11 @@
             <button type="submit" name="submit" value="value">Reimagine!</button>
         </form>
         </td>
+        <td>
+            <form method="get" th:action="@{'/unfollowPlaylist/' + ${pl.id}}">
+                <button type="submit" name="submit" value="value">Unfollow!</button>
+            </form>
+        </td>
     </tr>
 </table>
     <div>
